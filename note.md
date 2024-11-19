@@ -67,6 +67,7 @@ student = ['sname', 'sid', 'sgrade']
 # 期望输出
 sname, sid, sgrade
 ```
+### 3.2 操作列表
 #### 访问列表元素
 通过索引访问列表的元素。python和C语言一样，索引**从0开始**。特别的，通过指定索引为-1，可以访问最后一个列表元素，类似的，索引-2访问倒数第2个元素。
 
@@ -75,4 +76,78 @@ sname, sid, sgrade
 ```python
 student[0] = 'sid'
 ```
-上面的代码将`student[]`第一个元素修改为`sid`
+上面的代码将`student[]`第一个元素修改为`sid`。
+
+#### `append()`方法：追加元素
+列表的`append()`方法可以在列表的末尾添加元素。
+```python
+student.append('course')
+```
+上面的代码在student列表最后添加了元素`'course'`。
+
+#### `insert()`方法：插入元素
+```python
+student.insert(0, 'course')
+```
+上面的代码在索引为0的位置插入元素`'course'`。
+
+#### del关键字
+利用关键字del的语句，可以通过指定索引删除任意位置的元素。
+```python
+del student[0]
+```
+上面的语句删除`student[0]`元素。
+
+#### `pop()`方法：返回指定位置元素值后弹出元素
+```python
+pop_element = student.pop()
+```
+上面的代码将`student[]`的最后元素存储在`pop_element`中，然后将该元素弹出。  
+```python
+pop_element = student.pop(0)
+```
+上面的代码将`student[0]`存储在`pop_element`中，然后将该元素弹出。  
+通过`pop()`方法，可以利用列表实现队列和栈。
+
+#### `remove()`方法：根据值删除元素
+```python
+student.remove('sid')
+```
+上面的代码执行后会删除`student[]`中**第一个**满足值为`'sid'`的元素。  
+***注意：***`remove()`方法只会删除第一个值为给定参数的元素。若想删除所有满足条件的元素，需要利用循环。
+
+### 3.3 管理列表
+#### `sort()`方法：对列表进行永久排序
+```python
+cars = ['bmw', 'audi', 'toyota', 'subaru']
+cars.sort()
+```
+上面的代码会对`cars[]`进行字典序从小到大排序。
+```python
+cars.sort(reverse = True)
+```
+若需要进行从大到小的排序（逆序排序），则向`sort()`方法传递参数`reverse = True`即可。  
+**特别需要注意的是**，`sort()`方法对列表**永久排序**，该操作不可逆。
+
+#### `sorted()`函数：对列表进行临时排序
+*注意：`sorted()`是函数，直接把列表作为参数放入即可。*
+```python
+sorted_list = sorted(cars)
+```
+上面的代码将排序结果存储到`sorted_list[]`中，但是不会修改原列表。  
+*记忆方法：sort更短，因此操作直接原地修改。sorted更长，因此需要复制新的列表，排序才能不改变原列表。*
+
+#### `reverse()`方法：永久反转列表
+```python
+cars.reverse()
+```
+上面的代码将`cars[]`逆序储存。若想恢复原样，只需要再执行一次`reverse()`方法即可。
+
+#### `len()`函数：确认列表的长度
+*注意：`len()`是函数而不是方法，因此直接将列表名作为参数放入即可。*
+```python
+len(cars)
+```
+上面的代码会输出`cars[]`的长度4。
+
+####
