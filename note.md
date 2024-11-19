@@ -21,3 +21,11 @@ print("Hello, %s %s!" % (first_name.title(), last,name.title()))
 ```python
 my_name = my_name.strip()
 ```
+### 删除前缀方法`removeprefix()`
+`removeprefix()`方法接收一个前缀字符串作为参数，该方法施加的字符串若含参数前缀字符串，则前缀被删除。不会修改原字符串。
+```python
+url = 'https://www.google.com'
+print(url.removeprefix('https://'))
+```
+会输出`www.google.com`  
+类似的，`removesuffix()`方法可以
