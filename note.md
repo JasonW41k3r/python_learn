@@ -298,3 +298,45 @@ tuple_1 = (1, 2, 3, 4)
 类似的，`not in`关键字可以检查特定的值是否不在列表或元组当中。
 
 ### 5.3 `if`语句
+#### `if-else`语句
+```python
+if 条件语句:
+    ...
+else:
+    ...
+```
+
+#### `if-elif-else`语句
+```python
+if 条件语句1:
+    ...
+elif 条件语句2:
+    ...
+else:
+    ...
+```
+在明确`else`会执行的情况的时候，建议将`else`替换为`elif`及`else`执行的相关条件语句，使得代码逻辑更加清晰。
+
+### 5.4 `if`语句处理列表
+#### 检查列表元素
+```python
+sids = [0, 1, 2, 0, 5]
+for sid in sids:
+    if sid == 0:
+        print("sid error!")
+    else:
+        print(sid)
+```
+
+#### 检查列表非空
+```python
+sids = []
+if sids:
+    ...
+else:
+    print("Empty list!")
+```
+**注意**：对于数值`0`，空值`None`，空字符串`''`，空列表`[]`，空元组`()`，空字典`{}`，在条件语句当中python都会返回`False`。
+
+## CH6 字典
+
