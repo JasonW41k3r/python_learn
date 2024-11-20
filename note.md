@@ -150,4 +150,57 @@ len(cars)
 ```
 上面的代码会输出`cars[]`的长度4。
 
-#### 
+## CH4 操作列表
+### 4.1 遍历列表
+#### 简单for循环打印
+```python
+magicians = ['alice', 'david', 'carolina']
+for magician in magicians:
+    print(magician)
+```
+for循环的第一行代码`for magician in magicians:`中，`magician`是与循环列表每个值相关联的临时变量，可以取任何名称，但是建议选择与描述单个列表元素相关的名称。比如`for cats in cat:`, `for dog in dogs:`, `for item in item_lists:`  
+
+### 4.2 缩进
+for循环的循环体通过缩进标识，缩进结束表示循环结束。
+
+### 4.3 创建数值列表
+#### `range()`函数
+`range()`函数用于生成一系列的数。  
+python代码：
+```python
+for cnt in range(a, b):
+    ...
+```
+等价于C/C++代码：
+```c
+for (int cnt = a; cnt < b; cnt++) {
+    ...
+}
+```
+`range(a, b)`可以理解为生成了一个[a, b-1]的列表并循环遍历,但是实际上是生成了一个**迭代器**。  
+`range(0, a)`可以简写为`range(a)`。
+
+#### `range()`+`list()`创建数值列表
+`list()`函数可以直接将`range()`函数的结果转换为列表。
+```python
+list(range(a))
+```
+上面的代码会生成一个长度为a，大小[0, a - 1]的列表
+
+`range()`可以创建第三个参数用于指定步长，即`range(a, b, step)`  
+python代码：
+```python
+for cnt in range(a, b, step):
+    ...
+```
+等价于C/C++代码：
+```c++
+for (int cnt = a; cnt < b; cnt += step) {
+    ...
+}
+```
+
+#### 数值列表的统计计算
+`min()`函数找出数值列表的最小值，`max()`函数找出数值列表最大值，`sum()`函数对数值列表进行求和。
+
+#### 列表推导式
