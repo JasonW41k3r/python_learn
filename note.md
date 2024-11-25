@@ -590,3 +590,116 @@ introduction(job="student")
 由于默认参数放在参数列表的后面，所以上面的两种方式都可以正常调用`introduction()`函数。
 
 #### 等效函数调用
+...
+
+#### 避免实参错误
+...
+
+### 8.3 返回值
+```python
+def name(first_name, last_name):
+    full_name = (first_name + ' ' + last_name).title()
+    return full_name
+
+my_name = name("Jason", "Rao")
+print(my_name)
+```
+
+#### 可选实参
+可以通过默认值来让实参变成可选实参。**注意**：此时带默认值的实参需要放在参数列表末尾。
+
+#### 函数返回字典
+```python
+def name(first_name, last_name):
+    full_name = {'first_name': first_name, 'last_name': last_name}
+    return full_name
+
+my_name = name("Jason", "Rao")
+print(my_name)
+```
+
+#### 列表作为参数
+```python
+def greet(guests):
+    for guest in guests:
+        message = f"Hello {guest}! Welcome to my home!"
+        print(message) 
+
+guests_list = ['Jason', 'Timmy', 'Lucy', 'Vicky']
+greet(guests_list)
+```
+
+#### 函数中修改列表
+将列表作为参数传输给函数后，就可以在函数当中对列表进行修改。在函数中对列表的修改是**永久的**。
+
+#### 禁止函数修改列表
+可以通过将列表的副本作为参数传输给函数，防止函数内部未经授权对列表的修改。
+```python
+function_name(list_name[:])
+```
+其中，`list_name[:]`表示列表`list_name`的全切片，即列表的副本。在复制列表的时候也采用这种方式进行复制。
+
+### 8.5 传递任意数量的实参
+在一些函数当中，可能需要传递任意数量的实参。也有可能你预先不知道函数需要接受多少实参。
+
+```python
+def greet(*guests):
+    print(guests)
+
+greet('Jason', 'Lucy', 'Timmy', 'Vicky')
+```
+其中，`*guests`表示创建一个名为`guests`的元组，包含函数收到的所有值。
+
+#### 位置实参和任意数量的实参结合
+如果需要将位置实参和任意数量实参进行结合，则位置实参需要放在参数列表的开头，任意实参`args`需要放在参数列表的末尾，从而保证python可以正确读取参数列表。
+```python
+def greet(my_name, *guests):
+    for guest in guests:
+        message = f"Hello {guest}! I am {my_name}, welcome to my home!"
+        print(message)
+
+guests = ('Timmy', 'Lucy', 'Vicky')
+greet('Jason', *guests)
+greet('Jason', 'Timmy', 'Lucy', 'Vicky')
+```
+在上面的代码当中，`greet('Jason', *guests)`和`greet('Jason', 'Timmy', 'Lucy', 'Vicky')`的作用是一样的。
+
+也就是说，如果直接将元组名作为参数传入任意数量形参设置的函数，需要先对其进行解包`*`再传入函数。
+
+在标准python代码当中，任意数量位置参数实参常常用`*args`表示。
+
+#### 任意数量的关键词实参
+在预先不知道传递给函数的是什么样子的信息的时候（不知道传入参数的具体含义），可能需要使用到字典作为任意数量关键词实参的载体。
+
+```python
+def build_profile(first_name, last_name, **user_info):
+    user_info['first_name'] = first_name
+    user_info['last_name'] = last_name
+    return user_info
+
+user_profile = build_profile('Albert', 'Einstein', location='Priceton', field='Physics')
+```
+`**`引导的变量名在参数，会在函数的作用域当中创建一个以该参数为名的字典。在上面的代码当中，`Albert`和`Einstein`是固定的前两个实参，后面的键值对则会被加入到`user_info`字典当中。
+
+**注意**：
+1. 在参数列表当中，字典的键不需要加引号。python默认将等号左侧转换为字符串形式的键。
+2. 在标准python代码当中，常常将`**kwargs`用作形参名，指收集任意数量的关键字实参。`kwargs`是`keyword arguments`的缩写。
+
+### 8.6 将函数存储在模块当中
+#### 导入整个模块
+**模块**是扩展名为`.py`的文件，包含了要导入程序的代码。比如我定义了如下的函数:  
+*greet.py*
+```python
+def greet():
+    print("Hello! Welcome to my home!")
+```
+那么在另外一份代码当中，如果我想使用这个函数，可以`import greet`从而导入该函数：
+```python
+import greet
+greet()
+```
+具体来说，`import module`操作会让python在执行`import`的代码中打开`module.py`文件，并将`module.py`中的所有内容都复制到`import`该模块的代码当中。通常我们看不到复制代码的过程，因为python解释器会在程序即将运行的时候在幕后复制这些代码。
+
+
+
+
