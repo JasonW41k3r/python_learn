@@ -534,4 +534,59 @@ greet_user()
 
 紧跟在函数定义后的`"display greeting"`文本称为**文档字符串**（docstring），用于描述函数的功能。python在为函数生成文档时，会查找紧跟在函数定义后的文档字符串。
 
-通过`help()`函数，可以显示函数的文档字符串。
+通过`help()`函数，可以显示函数的文档字符串。 
+
+#### 函数传参
+```python
+def greet_user(username):
+    message = f"Hello, {username}!"
+    print(message)
+
+greet_user("Jason")
+```
+
+#### 实参vs形参
+函数定义的时候，参数列表中的参数是**形参**，而在函数调用的时候，传入函数列表的参数是**实参**。
+
+比如在上面的例子当中，`username`是形参，`Jason`是实参。
+
+### 8.2 传递实参
+#### 位置实参
+**位置实参**指基于参数列表中形参的顺序和实参传入的**顺序**进行关联。比如：
+```python
+def introduction(name, job):
+    message = f"My name is {name}, I am a {job}."
+    print(message)
+
+
+introduction("Jason", "student")
+```
+上面的代码会输出`My name is Jason, I am a student.`。
+
+#### 关键字实参
+**关键字实参**指直接将实参的值和形参名称关联起来。关键字实参使得无需考虑函数调用的实参顺序，并且在参数列表当中清楚地指出了函数调用各个值的用途。
+```python
+def introduction(name, job):
+    message = f"My name is {name}, I am a {job}."
+    print(message)
+
+introduction(job="student", name="Jason")
+```
+上面的代码会输出`My name is Jason, I am a student.`。
+
+**注意：**在使用关键字实参的时候，务必准确指定函数定义的形参名。
+
+#### 参数默认值
+可以在函数定义时为形参指定默认值。调用函数时若提供实参，则使用指定实参值，否则使用形参的默认值。
+
+**注意**：在定义函数的时候应该把含默认值的形参放在参数列表的后面，不含默认值的形参放在参数列表的前面。这样可以保证在通过位置实参和关键字实参调用函数的时候python都可以正确解读参数。
+```python
+def introduction(job, name="Jason"):
+    message = f"My name is {name}, I am a {job}."
+    print(message)
+introduction("student")
+introduction(job="student")
+```
+由于默认参数放在参数列表的后面，所以上面的两种方式都可以正常调用`introduction()`函数。
+
+#### 等效函数调用
