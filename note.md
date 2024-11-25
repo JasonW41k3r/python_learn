@@ -511,3 +511,27 @@ while 条件语句:
 在循环体内，`continue`关键字后面的部分在该次循环会被忽略，然后进入下次循环。
 
 ### 7.3 `while`循环处理列表和字典
+#### 删除特定值的所有列表元素
+`remove()`方法可以删除第一个列表中的参数元素，`remove()`方法和`while`语句结合可以删除特定值的所有列表元素。
+```python
+pets = ['cat', 'dog', 'wolf', 'fish', 'lion', 'tiger']
+while 'cat' in pets:
+    pets.remove('cat')
+print(pets)
+```
+`while 'cat' in pets:`语句在`pets[]`中仍然有`'cat'`元素的时候持续执行删除`'cat'`元素的行为，并在列表中不含有`'cat'`元素的时候停止执行。
+
+## CH8 函数
+### 8.1 定义函数
+```python
+def greet_user():
+    """display greeting"""
+    print("Hello!")
+
+greet_user()
+```
+`def greet_user():`整体为函数定义，紧跟在后面的所有缩进行构成函数体。
+
+紧跟在函数定义后的`"display greeting"`文本称为**文档字符串**（docstring），用于描述函数的功能。python在为函数生成文档时，会查找紧跟在函数定义后的文档字符串。
+
+通过`help()`函数，可以显示函数的文档字符串。
