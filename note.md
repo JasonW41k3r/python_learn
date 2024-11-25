@@ -690,16 +690,58 @@ user_profile = build_profile('Albert', 'Einstein', location='Priceton', field='P
 **模块**是扩展名为`.py`的文件，包含了要导入程序的代码。比如我定义了如下的函数:  
 *greet.py*
 ```python
-def greet():
+def greet_guests():
     print("Hello! Welcome to my home!")
 ```
 那么在另外一份代码当中，如果我想使用这个函数，可以`import greet`从而导入该函数：
 ```python
 import greet
-greet()
+greet.greet_guests()
 ```
 具体来说，`import module`操作会让python在执行`import`的代码中打开`module.py`文件，并将`module.py`中的所有内容都复制到`import`该模块的代码当中。通常我们看不到复制代码的过程，因为python解释器会在程序即将运行的时候在幕后复制这些代码。
 
+如果要调用被导入模块当中的函数，需要指定被导入模块的名称`module_name`和函数名称`function_name`，并用句点隔开，比如`module_name.function_name()`,`greet.greet()`。
 
+#### 导入特定的函数
+可以只导入特定模块的特定函数，语法如下：
+```python
+from module_name import function_name
+```
+用逗号分隔函数名，可以根据需要从模块当中导入任意数量的该模块当中的函数。
+```python
+from module_name import function_1, function_2, function_3
+```
+使用上面的语法的时候，不需要在调用函数的时候使用句点，而只需要指定其名称即可。比如下面的实例：
+```python
+from greet import greet_guests
+greet_guests()
+```
 
+#### 使用`as`为模块指定别名
+**注意**：`as`关键字指定别名的对象是**模块**而不是函数。使用`as`指定别名的通用语法如下：
+```python
+import module_name as mn
+```
+为模块指定别名不会改变模块内函数的函数名，还会使得代码更加简洁，使得程序员不需要关注模块名，只专注于描述性的函数名。
 
+#### 导入模块中的所有函数
+使用**星号（*）**运算符可以导入模块中的所有函数。
+```python
+from module_name import *
+```
+但是无论如何，**强烈不推荐**在自己的代码当中使用这种特性。原因同C++中不推荐使用`using namespace std;`一样。
+
+### 8.7 函数编写指北
+编写函数的时候，需要牢记下面的一些细节：
+1. 应给函数指定描述性名称，且名称只使用小写字母和下划线
+2. 每个函数都应该包含简要阐述其功能的注释。注释需要紧跟在函数定义的冒号后一行，采用文档字符串的形式。
+3. 给函数形参指定默认值的时候，不要像往常一样在等号两侧加上空格。`def function_name(parameter_0, parameter_1='default value')`是正确的写法。
+4. PEP 8 建议代码每行的长度不要超过79个字符。如果形参过多导致函数定义长度超过了79个字符，可以采用下面的写法：
+```python
+def function_name(
+        parameter_0, parameter_1, parameter_2,
+        parameter_3, parameter_4, parameter_5):
+    function body...
+```
+5. 如果程序或者模块包含多个函数，则应该使用两个空行将相邻的函数分开。
+6. 所有的`import`语句都应该放在代码文件的开头，例外是文件开头需要使用注释描述整个程序。
