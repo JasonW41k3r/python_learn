@@ -189,6 +189,7 @@ for magician in magicians:
 ```
 for循环的第一行代码`for magician in magicians:`中，`magician`是与循环列表每个值相关联的临时变量，可以取任何名称，但是建议选择与描述单个列表元素相关的名称。比如`for cats in cat:`, `for dog in dogs:`, `for item in item_lists:`  
 
+**注意：**`for magician in magicians`中只是将`magicians`列表中的每个元素依次赋值给临时变量`magician`，`magician`只是保存了元素的副本，因此对`magician`进行修改并不会导致原列表的改变。如果需要修改原列表，只能通过下标索引方法访问元素并修改。
 ### 4.2 缩进
 for循环的循环体通过缩进标识，缩进结束表示循环结束。
 
@@ -1015,4 +1016,29 @@ lucky_guest = random.choice(guests_list)
 3. 可以使用空行组织代码，但是不宜使用过多的空行。类中使用一个空行分隔方法，模块中使用两个空行来分隔类。
 4. 需要同时导入 python 标准库中的模块和其他外部模块的时候，先编写导入标准库模块的`import`语句，再添加一个空行，然后编写其他外部模块的导入语句。
 
-## CH10 文件
+## CH10 文件和异常
+**异常**是python创建的特殊对象，用于管理程序运行时出现的错误。
+
+### 10.1 读取文件
+#### 读取文件的全部内容
+```python
+from pathlib import Path
+path = Path('pi_digits.txt')
+contents = path.read.txt()
+print(contents)
+```
+若需要获取文件的内容，首先要将文件的路径告知python。python使用库`pathlib`来轻松地处理文件和目录。
+
+首先导入`pathlib`中的`Path`类。`Path`类用文件路径作为参数实例化后的对象指向该文件。`Path`类的方法`read_text()`会读取该文件的所有内容并作为一个字符串返回。
+
+**注意**：
+1. `read_text()`方法在读取到文件末尾时会返回一个空字符串，因此读取的内容相比原内容会增加一个空行。可以通过`rstrip()`方法删除多余的空行。
+2. Windows的系统文件路径使用反斜杠（`\`），但是在python中所有路径一律采用**斜杆**（`/`）。
+
+#### `splitlines()`方法
+`splitlines()`方法是python的一个内置字符串方法，目的是将字符串存储到列表中，其中每行单独存储为列表的一个元素。
+
+#### 大型文件
+python没有对可处理的数据量有任何的限制，因此只要系统内存足够大，python可以处理无穷多的数据量。
+
+若某个文件包含百万级别的数据量，为了不让终端花时间滚动显示数据，可以使用切片处理部分数据。
