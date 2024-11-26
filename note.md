@@ -745,3 +745,61 @@ def function_name(
 ```
 5. 如果程序或者模块包含多个函数，则应该使用两个空行将相邻的函数分开。
 6. 所有的`import`语句都应该放在代码文件的开头，例外是文件开头需要使用注释描述整个程序。
+
+## CH9 类
+**面向对象编程**（object-oriented programming，OOP）是最有效的程序编写方法之一。在OOP中，我们编写表示现实世界事物和情景的**类**，并基于这些类创建**对象**。
+
+根据类创建对象的行为称为**实例化**。
+
+### 9.1 创建和使用类
+
+#### 创建类
+```python
+class Dog:
+    """Simulation of dog class"""
+
+    def __init__(self, name, age):
+        """Initialize attributes name and age"""
+        self.name = name
+        self.age = age
+
+    def sit(self):
+        """Simulate dog sitting when asked"""
+        print(f"{self.name} is now sitting.")
+
+    def roll_over(self):
+        """Simulate dog rolling when asked"""
+        print(f"{self.name} is now rolling.")
+```
+根据约定，在python当中，首字母大写的名称指的是类。然后紧跟文档字符串，用于描述这个类的功能。
+
+##### __init__方法
+类中的函数称为**方法**，有关函数的一切基本都适用于方法，唯一的区别是调用的方式。`__init__()`是一个特殊方法，每次根据类创建新的实例的时候都会自动运行该方法。
+
+**注意**：
+1. `__init__()`方法的名称开头和末尾各有两个下划线，这是python的约定，用于将默认方法和普通方法发生名称冲突。
+2. `__init__()`方法的定义当中，形参`self`必不可少，并且必须位于参数列表第一位。
+
+【Tips】为什么必须在`__init__()`方法定义中包含形参`self`？因为当python调用`__init__()`方法创建实例的时候，会自动传递实参`self`，即一个指向实例本身的引用，让实例可以访问类中的属性和方法。
+
+在`__init__()`方法内定义的变量称为**属性**，这些属性需要带有前缀`self`，可供类中的所有方法使用。`self.name = name`获取形参`name`的值并赋给属性`name`。
+
+#### 创建实例
+```python
+my_dog = Dog('Willie', 6)
+print(f"My dog's name is {my_dog.name}.")
+print(f"My dog's is {my_dog.age} years old.")
+```
+
+##### 访问属性
+```python
+my_dog.name
+```
+
+##### 调用方法
+```python
+my_dog.sit()
+my_dog.roll_over()
+```
+
+### 9.2 使用类和实例
