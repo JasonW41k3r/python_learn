@@ -972,3 +972,22 @@ from module_name import *
 星号（*）表示某一个模块下面的所有类。  
 **注意**：不推荐这种写法，可能会产生命名冲突。
 
+#### 使用别名
+可以使用以下的语法给类指定别名
+```python
+from electric_car import ElectricCar as EC
+```
+在指定了上面所指示的别名后，需要创建电动汽车的时候，可以指定别名`EC`。
+```python
+my_bmw = EC('bmw', '520Li', 2024)
+```
+此外，还可以给模块指定别名。
+```python
+import electric_car as ec
+```
+这样，下面使用该模块内的类的时候，可以采用如下的语法：
+```python
+my_bmw = ec.ElectricCar('bmw', '520Li', 2024)
+```
+
+### 9.5 python标准库
