@@ -1114,9 +1114,29 @@ else:
 ### 10.4 数据存储
 很多程序要求用户输入信息，当用户关闭程序的时候，几乎总是要保存他们提供的信息。一种方式是使用`json`模块来存储数据。
 
-python的`json`模块可以很方便地将简单的python数据结构转换为`JSON`格式的字符串。`JSON`格式的数据有下面的好处：  
+python的`json`模块可以很方便地将简单的python数据结构（比如列表，元组，字典）转换为`JSON`格式的字符串。`JSON`格式的数据有下面的好处：  
 1. 可以很方便地在python程序运行的时候加载`JSON`格式的数据
 2. 可以使用`JSON`方便地在程序之间共享数据
 3. `JSON`格式的数据可以和python外的其他编程语言共享。
 
+#### `json.dumps()`和`json.loads()`函数
+`json.dumps()`接收一个python数据结构（列表，元组或字典），并返回一个`JSON`格式的字符串。`json.loads()`接收一个指向`JSON`格式文件的python的`Path`对象，返回该`JSON`格式文件存储的python数据结构。  
 
+下面的代码演示了如何将python的数据结构导出到`JSON`格式的文件当中：
+```python
+import json
+from pathlib import Path
+
+guests_list = ['Jason', 'Timmy', 'Lucy', 'Vicky']
+contents = json.dumps(guests_list)
+path = Path('guests_list.json')
+path.write_text(contents)
+```
+下面的代码展示了如何在python代码当中读取`JSON`格式的文件从而将其转换为python可以识别的数据结构。
+```python
+import json
+from pathlib import Path
+
+path = Path('guests_list.json')
+guests_list = json.loads(path.read_text())
+```
