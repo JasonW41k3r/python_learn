@@ -991,3 +991,28 @@ my_bmw = ec.ElectricCar('bmw', '520Li', 2024)
 ```
 
 ### 9.5 python标准库
+**python标准库**是一组模块，在安装python的时候已经包含在内。
+#### `random`标准库
+##### 1. `randint()`函数
+`random`标准库中的函数`randint()`可以将两个整数作为参数，随即返回位于两个整数之间（含）的整数。
+```python
+import random
+random_number = random.randint(1, 6)
+```
+上面的代码会生成一个`1 <= random_number <= 6`的整数。
+
+##### 2. `choice()`函数
+`random`标准库中的函数`choice()`可以接收一个列表或者元组作为参数，并随机地返回其中的一个元素。
+```python
+import random
+guests_list = ['Jason', 'Timmy', 'Lucy', 'Vicky']
+lucky_guest = random.choice(guests_list)
+```
+
+### 9.6 类的编程风格
+1. 类名应该采用**驼峰命名法**，即类名中的每个单词的首字母都大写，并且**不使用下划线**。
+2. 实例名和模块名都采用**全小写格式**，单词之间需要加上**下划线**。
+3. 可以使用空行组织代码，但是不宜使用过多的空行。类中使用一个空行分隔方法，模块中使用两个空行来分隔类。
+4. 需要同时导入 python 标准库中的模块和其他外部模块的时候，先编写导入标准库模块的`import`语句，再添加一个空行，然后编写其他外部模块的导入语句。
+
+## CH10 文件
