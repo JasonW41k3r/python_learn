@@ -1034,6 +1034,7 @@ print(contents)
 **注意**：
 1. `read_text()`方法在读取到文件末尾时会返回一个空字符串，因此读取的内容相比原内容会增加一个空行。可以通过`rstrip()`方法删除多余的空行。
 2. Windows的系统文件路径使用反斜杠（`\`），但是在python中所有路径一律采用**斜杆**（`/`）。
+3. 直接将`Path`类在`print()`函数中输出，会输出该路径指向的文件名。
 
 #### `splitlines()`方法
 `splitlines()`方法是python的一个内置字符串方法，目的是将字符串存储到列表中，其中每行单独存储为列表的一个元素。
@@ -1042,3 +1043,80 @@ print(contents)
 python没有对可处理的数据量有任何的限制，因此只要系统内存足够大，python可以处理无穷多的数据量。
 
 若某个文件包含百万级别的数据量，为了不让终端花时间滚动显示数据，可以使用切片处理部分数据。
+
+### 10.2 写入文件
+定义了一个文件的路径之后，可以使用`Path`类的`write_text()`将数据写入文件当中。写入文件的顺序和`read_text()`方法读取文件的顺序几乎相同。
+
+`write_text()`方法接收一个字符串作为参数，该方法会将字符串写入文件当中。
+
+**注意**：
+1. python只能将字符串写入文本文件当中，如果要将数值结果存放到文本文件当中，则需要通过`str()`函数将数值结果转换为字符串后再存放到文本文件当中。
+2. 如果文件本身有内容，那么`write_text()`方法会覆盖文件原本的内容，而不是在文件后面追加内容。文件原本的内容将会被删除并且不可被恢复。
+
+### 10.3 异常
+python使用称为**异常**（exception）的对象来管理python运行过程当中出现的错误。
+
+每当发生python错误的时候，python会创建一个异常对象。如果程序员提前编写了处理该异常对象的代码，程序将按编写好的处理程序继续运行。
+
+如果程序员未对该类型的异常进行处理，程序将停止并显示一个令人费解的`traceback`，其中包含异常报告。
+
+异常使用`try-except`代码块处理。`try-except`代码块让python执行指定的操作，并告诉python发生错误时的做法。在`try-except`代码块内，即使出现异常，程序仍将继续运行，显示程序员编写的错误信息，而不是迷惑的`traceback`信息。
+
+#### `try-except`代码块
+下面是一个处理`ZeroDivisionError`异常的`try-except`代码：
+```python
+try:
+    print(5/0)
+except ZeroDivisionError:
+    print("You can't divide by zero!")
+```
+
+#### 异常避免崩溃
+若可能出现崩溃的代码没有采用异常处理措施，在崩溃时出现的`traceback`错误信息也许会让用户迷惑。而一些训练有素的用户则会通过`traceback`获取一些你不想让他们知道的信息，比如部分代码段以及代码文件名。
+
+#### `else`代码块
+可以在`except`代码块后放入代码，这些代码只有在`try`代码块内的代码成功运行的时候才会执行。即只有`try`代码块成功执行才需要执行的代码，都需要放到`else`代码块当中。
+
+#### `FileNotFoundError`异常
+```python
+from pathlib import Path
+
+path = Path('alice.txt')
+try:
+    path.read_text(encoding='utf-8')
+except FileNotFound:
+    print(f"Sorry, the file {path} does not exist.")
+```
+
+#### 分析文本
+`split()`方法默认以空白为分隔符将字符串拆分成多部份，组成一个列表。通过统计这个列表的长度，可以粗略估计一个字符串当中有多少个单词。
+```python
+from pathlib import Path
+
+path = Path('alice.txt')
+try:
+    content = path.read_text(encoding='utf-8')
+except FileNotFoundError:
+    print(f"Sorry, the file {path} does not exist.")
+else:
+    word_count = len(content.split())
+    print(f"The file {path} contains about {word_count} words.")
+```
+
+#### 使用多个文件
+...
+
+#### 静默异常
+并不是什么时候都需要将异常信息告知用户。如果想在发生异常的时候保持静默，可以使用`pass`语句，以明确告诉python什么都不做。
+
+**注意**：不能采取在`except`代码块中什么都不写的方式来尝试达到静默的目的。python中代码块不能为空，否则会报错`IndentationError`。
+
+### 10.4 数据存储
+很多程序要求用户输入信息，当用户关闭程序的时候，几乎总是要保存他们提供的信息。一种方式是使用`json`模块来存储数据。
+
+python的`json`模块可以很方便地将简单的python数据结构转换为`JSON`格式的字符串。`JSON`格式的数据有下面的好处：  
+1. 可以很方便地在python程序运行的时候加载`JSON`格式的数据
+2. 可以使用`JSON`方便地在程序之间共享数据
+3. `JSON`格式的数据可以和python外的其他编程语言共享。
+
+
