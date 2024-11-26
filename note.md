@@ -803,3 +803,38 @@ my_dog.roll_over()
 ```
 
 ### 9.2 使用类和实例
+
+#### 给属性指定默认值
+```python
+class Car:
+    def __init__(self, make, model, year):
+        """初始化描述汽车的属性"""
+        self.make = make
+        self.model = model
+        self.year = year
+        self.odometer_reading = 0
+    def get_descriptive_name(self):
+        --snip--
+    def read_odometer(self):
+        """打印一条指出汽车行驶里程的消息"""
+        print(f"This car has {self.odometer_reading} miles on it.")
+
+my_new_car = Car('audi', 'a4', 2024)
+print(my_new_car.get_descriptive_name())
+my_new_car.read_odometer()
+```
+对于上面的代码，python在创建`Car`类的实例的时候，会自动创建名为`odometer_reading`的属性，并将其**初始值**设置为0。
+
+#### 通过方法修改属性的值
+```python
+class Car:
+    --snip--
+
+    def update_odometer(self, new_value):
+        if new_value >= self.odometer_read:
+            self.odometer_read = new_value
+        else:
+            print("You can't roll back an odometer!")
+```
+通过上面的方法修改里程数属性的时候，方法会检查新读数是否合理，并在不合理的时候给出警告。
+
