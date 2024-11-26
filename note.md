@@ -838,3 +838,137 @@ class Car:
 ```
 通过上面的方法修改里程数属性的时候，方法会检查新读数是否合理，并在不合理的时候给出警告。
 
+### 9.3 继承
+#### 子类的`__init__()`方法和子类的属性
+```python
+class ElectricCar(Car):
+    def __init__(self, make, model, year):
+        """初始化父类的属性"""
+        super().__init__(make, model, year)
+        
+        """初始化子类的属性"""
+        self.battery_size = 40
+    
+    """子类的方法"""
+    def describe_battery(self):
+        """打印描述电池的信息"""
+        print(f"The size of the battery is {self.battery_size}".)
+        
+```
+在创建子类的时候，父类必须包含在当前同一个文件当中，并且位于子类的前面。定义子类的时候，必须在括号内指定其父类的名称。
+
+`super()`函数是一个特殊的函数，用于调用父类的方法。父类又称为**超类**（superclass）。`super().__init()`使得子类调用了父类的初始化方法用于初始化子类的属性。
+
+#### 重写父类的方法
+有些情况，父类的方法不能满足子类的需求，就需要对父类的方法进行重写。只需要在子类的类内重新定义一次父类的方法，重写方法体，则在对子类调用该方法的时候python会自动使用子类版本而非父类版本。
+
+#### 将一个类的实例用作另一个类的属性
+```python
+class Car:
+    --snip--
+    
+class Battery:
+    """一次模拟电动汽车电池简单尝试"""
+
+    def __init__(self, battery_size=40):
+        """初始化电池的属性"""
+        self.battery_size = battery_size
+        
+        def describe_battery(self):
+            """打印一条描述电池容量的消息"""
+            print(f"This car has a {self.battery_size}-kWh battery.")
+
+class ElectricCar(Car):
+    """电动汽车的独特之处"""
+    def __init__(self, make, model, year):
+        """
+        先初始化父类的属性，再初始化电动汽车特有的属性
+        """
+        super().__init__(make, model, year)
+        self.battery = Battery()
+
+my_car = ElectricCar('bmw', '520Li', 2024)
+```
+在上面的代码示例当中，`ElectricCar`类初始化方法当中的`self.battery = Battery()`含义是在初始化`ElectricCar`类的时候，将一个`Battery`类的实例赋值给`ElectricCar`类的`battery`属性。
+
+在调用`ElectricCar`类的`battery`相关属性和方法的时候，可以像这样：`my_car.battery.battery_size`。
+
+### 9.4 导入类
+python允许将类存储在模块当中，然后在主程序中导入所需的模块。
+
+#### 导入单个类
+*car.py*
+```python
+❶"""一个用来表示汽车的类"""
+
+class Car:
+    """一次模拟汽车的简单尝试"""
+
+    def __init__(self, make, model, year):
+        """初始化描述汽车的属性"""
+        self.make = make
+        self.model = model
+        self.year = year
+        self.odometer_reading = 0
+    
+    def get_descriptive_name(self):
+        """返回格式规范的描述性名称"""
+        long_name = f"{self.year} {self.make} {self.model}"
+        return long_name.title()
+    
+    def read_odometer(self):
+        """打印一条消息，指出汽车的行驶里程"""
+        print(f"This car has {self.odometer_reading} miles on it.")
+    
+    def update_odometer(self, mileage):
+        """
+        将里程表读数设置为指定的值
+        拒绝将里程表往回调
+        """
+        if mileage >= self.odometer_reading:
+            self.odometer_reading = mileage
+        else:
+            print("You can't roll back an odometer!")
+
+    def increment_odometer(self, miles):
+        """让里程表读数增加指定的量"""
+        self.odometer += miles
+```
+❶处是一个模块级的文档字符串。应该为创建的每个模块都编写文档字符串。
+
+在另外一个文件当中，导入模块`car`中的`Car`类，并创建一个实例：
+```python
+from car import Car
+
+my_new_car = Car('audi', 'a4', 2024)
+print(my_new_car.get_descriptive_name())
+
+my_new_car.odometer_reading = 23
+my_new_car.read_odometer()
+```
+导入类的一般性语句为：`from module_name import class_name`，其中`module_name`为包含该类代码的文件名。
+
+#### 在一个模块当中存储多个类
+...
+
+#### 从一个模块当中导入多个类
+从一个模块导入多个类的时候，用逗号分隔开各个类。一般性语句为：`from module_name import class_1, class_2, ...`
+
+#### 导入整个模块
+可以先导入整个模块，再利用“模块名+点号+类名”访问所有需要的类。
+```python
+import car
+
+my_bmw = car.Car('bmw', '520Li', 2024)
+my_audi = car.Car('audi', 'A8L', 2024)
+```
+使用的一般性语句为：`module_name.class_name`
+
+#### 导入模块的所有类
+可以使用下面的语法导入模块当中的所有类：
+```python
+from module_name import *
+```
+星号（*）表示某一个模块下面的所有类。  
+**注意**：不推荐这种写法，可能会产生命名冲突。
+
