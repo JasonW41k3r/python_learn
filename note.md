@@ -1318,3 +1318,62 @@ ax.scatter(x_values, y_values, c=y_values, cmap=plt.cm.Blues, s=10)
 `savefig()`方法可以用于将绘图保存到文件当中，而不是使用`show()`方法在查看器中查看图像。
 
 `savefig('file_name.png', bbox_inches='tight')`：第一个参数指保存的文件名，第二个参数指省略绘图周围多余的空白区域。
+
+## CH16 下载数据
+### 16.1 CSV文件格式
+`CSV`（comma-separated values）格式，即以逗号分隔的值。
+#### 解析CSV文件头
+CSV的文件头包含一系列内容，指出后续各行包含的信息（即表头）。
+```python
+from pathlib import Path
+import csv
+
+path = Path('file_name.csv')
+lines = path.read_text().splitlines()
+
+reader = csv.reader(lines)
+header_row = next(reader)
+```
+上面的代码读取CSV文件的文件头并存储到`header_row`当中。
+
+`path.read_text().splitlines()`语句的效果是把CSV文件的内容写入一个列表内，其中列表的每个元素是CSV的一行数据。
+
+`csv.reader()`函数接收一个CSV文件经过`splitlines()`方法生成的列表，效果是把CSV文件的每行单独组织称为一个列表，列表的元素是每个表项。
+
+**注意**：`csv.reader()`生成的是`惰性迭代器`，在迭代结束后不会回到开头，因此在读取文件头后可以将其存入列表进行读取。
+ 
+ `next()`函数，用于返回迭代器的下一项。当`next()`函数接收`csv.reader()`的`reader`时，效果依次返回CSV文件的每行组成的列表。执行`next()`函数会改变`reader`的起始位置。因此通常只在读取文件头的时候使用`next()`函数。
+
+#### 打印文件头及其位置
+`enumerate()`函数是python一个内置函数，接收一个可迭代对象（列表，元组...），返回每一项的索引及元素。
+
+用法：`for index, value in enumerate(list)`
+```python
+import csv
+from pathlib import Path
+
+path = Path('./weather_data/death_valley_2021_full.csv')
+lines = path.read_text().splitlines()
+readers = csv.reader(lines)
+header_row = next(readers)
+for index, value in enumerate(header_row):
+    print(f"{index}: {value}")
+```
+
+#### 提取并读取数据
+```python
+...
+values = []
+for row in readers:
+    value = int(row[4]) #读取第五列的元素，并转换为整型数据
+    values.append(value)
+```
+
+#### `datetime`模块
+`datetime`模块可以用于解析字符串格式的时间。
+```python
+date = datetime.strptime(str_time, str_fmt)
+```
+其中`str_time`是字符串格式的时间，`str_fmt`是指示该字符串格式的格式控制字符串，如`'%Y-%m-%d'`。
+
+`strptime()`函数用于从字符串解析时间，`strptime`是string parse time的缩写。
