@@ -1289,3 +1289,32 @@ plt.style.use('seaborn-v0_8')
 `tick_params()`方法可以用于设置刻度标记的样式，比如字体大小等等。比如`ax.tick_params(labelsize=14)`。
 
 若要使用`scatter()`绘制一系列点的散点图，可以分别向`scatter()`传递包含`x`和`y`坐标值的列表。
+```python
+import matplotlib.pyplot as plt
+
+square = [value ** 2 for value in range(1, 11)]
+fig, ax = plt.subplots()
+ax.scatter(list(range(1, 11)), square, label='Square line', s=10) #**kwargs部分设置线条标签（图例）
+ax.set_title('Square line') #设置图表标题
+ax.set_xlabel('x') #设置x轴标签
+ax.set_ylabel('y') #设置y轴标签
+plt.legend() #用于显示线条标签（图例）
+plt.show()
+```
+
+在刻度标记的数字很大的时候，`matplotlib`会自动使用科学计数法表示，`ticklabel_format(style='plain')`方法可以强制`matplotlib`始终使用常规表示法。
+
+#### 定制颜色
+向`scatter()`方法传递`color`参数可以定制点的颜色。比如`color='red'`表示数据点红色，也可以使用RGB方法表示，比如`color=(0.1, 0.5, 0.6)`，每个RGB分量在[0, 1]之间。
+
+#### 颜色映射
+**颜色映射**（colormap）是一个从起始颜色渐变到结束颜色的颜色序列，可以用于突出数据的规律。
+```python
+ax.scatter(x_values, y_values, c=y_values, cmap=plt.cm.Blues, s=10)
+```
+`c`参数指示需要颜色映射的参数，这里指根据`y`坐标的值决定该点的颜色。`cmap`参数指定颜色映射的模板。
+
+#### 自动保存绘图
+`savefig()`方法可以用于将绘图保存到文件当中，而不是使用`show()`方法在查看器中查看图像。
+
+`savefig('file_name.png', bbox_inches='tight')`：第一个参数指保存的文件名，第二个参数指省略绘图周围多余的空白区域。
