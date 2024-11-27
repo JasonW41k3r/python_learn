@@ -1120,7 +1120,7 @@ python的`json`模块可以很方便地将简单的python数据结构（比如�
 3. `JSON`格式的数据可以和python外的其他编程语言共享。
 
 #### `json.dumps()`和`json.loads()`函数
-`json.dumps()`接收一个python数据结构（列表，元组或字典），并返回一个`JSON`格式的字符串。`json.loads()`接收一个指向`JSON`格式文件的python的`Path`对象，返回该`JSON`格式文件存储的python数据结构。  
+`json.dumps()`接收一个python数据结构（列表，元组或字典），并返回一个`JSON`格式的字符串。`json.loads()`接收一个`JSON`格式的字符串，返回该`JSON`格式字符串存储的python数据结构。  
 
 下面的代码演示了如何将python的数据结构导出到`JSON`格式的文件当中：
 ```python
@@ -1140,3 +1140,152 @@ from pathlib import Path
 path = Path('guests_list.json')
 guests_list = json.loads(path.read_text())
 ```
+
+#### `Path`类的`exists()`方法
+`Path`类的`exists()`方法可以用于检测文件是否存在。若文件存在则返回`True`，文件不存在则返回`False`。
+
+#### 重构
+**重构**是指将已经写好的可以正确运行的程序拆分成不同的函数，每个函数执行单一的任务。重构可以让代码更清晰，更易于理解，更容易扩展。
+
+## CH11 测试代码
+### 11.2 测试函数
+#### 单元测试和测试用例
+1. 单元（unit）：即软件或函数的某个方面，比如计算器能否处理除0情况是一个单元，能否进行四则运算是另一个单元。
+2. 单元测试（unit test）：核实上面描述的单元能否正确运行。
+3. 测试用例（test case）：一组单元测试，核实软件或函数在各种情况下行为符合要求。
+
+下面展示的是一个待测试的函数：  
+*name_function.py*
+```python
+def get_formatted_name(first_name, last_name):
+    full_name = f"{first_name.title()} + ' ' + {last_name.title()}"
+    return full_name
+```
+
+针对上面待测试的函数的测试代码如下：
+```python
+from name_function.py import get_formatted_name
+
+def test_first_last_name():
+    """以下是针对一个单元的测试"""
+    formatted_name = get_formatted_name('jason', 'rao')
+    assert formatted_name == 'Jason Rao'
+```
+**注意**：  
+1. 测试文件的内容是运行相关测试的**函数**。
+2. 测试文件的名称必须以`test_`开头或以`_test`结尾，因为当`pytest`运行测试时，会查找以`test_`开头或以`_test`结尾的文件，并运行其中的测试。
+3. 运行测试的方式是在`test_`开头或以`_test`结尾的测试文件的目录下执行`pytest`命令，`pytest`会自动运行程序调用目录下的所有测试文件中的测试函数。
+
+#### `assert`语句
+`assert`语句即断言，是指当`assert`后面的条件语句不成立的时候，python会立刻抛出`AssertionError`异常从而终止程序，而不是让程序继续运行下去。
+```python
+assert 条件语句
+```
+上面的断言语句，等价于下面的`if`语句：
+```python
+if not 条件语句:
+    raise AssertError
+```
+
+#### 断言重写
+pytest有**断言重写**机制，即当pytest运行的测试代码当中`assert`抛出`AssertionError`异常，pytest会改写该异常为实际引起`assert`不成立的错误原因。
+
+### 11.3 测试类
+#### 使用夹具（fixture）
+**夹具**（fixture）用于帮助搭建测试环境。在测试类的过程中，可以利用夹具创建所有测试用例都可以共同使用的一个实例，而不需要每个测试用例都单独创建一个类的实例。
+
+**装饰器**（decorator）是放在函数定义前的指令，python会在函数运行前将该指令用于函数，从而修改函数代码的行为。有点类似C/C++函数前的`static`修饰符等等。
+
+在 pytest 中，创建一个夹具（fixture）用于测试，需要定义一个使用 `@pytest.fixture` 装饰的函数。`@pytest.fixture` 是 `pytest` 模块中的装饰器，因此需要先引入 `pytest` 模块。被 `@pytest.fixture` 装饰的函数，其返回值代表的资源或数据会被 pytest 管理，并可以通过依赖注入机制自动传递给其他测试函数。这些测试函数只需要在参数中声明夹具函数的名称，就能访问夹具的返回值或资源，而无需显式调用该函数。
+
+```python
+import pytest
+
+@pytest.fixture
+def public_case():
+    # 夹具准备阶段
+    case = {"key": "value"}
+    return case  # 返回需要注入的资源
+
+def test_case(public_case):
+    # 测试函数使用夹具的返回值
+    assert public_case["key"] == "value"
+```
+在上面的代码当中，夹具`public_case`中的返回值`case`会被注入其他函数当中，比如`test_case`当中，其他函数通过调用夹具所在的函数名来使用夹具返回的资源。
+
+## CH15 数据
+### 15.2 简单绘制
+**注意**：  
+1. 导入语句通常为`import matplotlib.pyplot as plt`
+2. `fig, ax = plt.subplots()`显式生成一个**图表容器**`Figure`对象，和一个**绘图子区域**`Axes`对象。`Figure`理解为整张白纸hi，`Axes`理解为这张白纸上的一块矩形区域。
+3. `Figure`设置对象是整个图像的大小，布局等等，`Axes`的设置对象是局部内容，比如坐标轴，标题，曲线类型等等。
+4. `plot()`方法：作用于`Axes`对象，接收一个用于绘制折线图。
+5. `show()`函数：打开`Matplotlib`查看器并显示绘图。
+
+#### `plot()`方法
+函数签名：
+```python
+plot([x], y, [fmt], *, data=None, **kwargs)
+plot([x], y, [fmt], [x2], y2, [fmt2], ..., **kwargs)
+```
+**注意**：  
+1. 函数签名中参数列表的**星号（*）**表示紧跟后面的一个参数必须以关键字参数方式传参。即`data`参数必须以`data=...`方式传参。
+2. 函数签名中参数带方括号`[]`表示该参数为可选参数。
+
+`plot()`方法实例：
+```python
+# 不指定 x，默认使用索引作为 x
+plt.plot([1, 4, 9, 16])  # y 数据
+
+# 指定 x 和 y
+plt.plot([0, 1, 2, 3], [1, 4, 9, 16])  # x 和 y 数据
+
+# 使用格式字符串
+plt.plot([0, 1, 2, 3], [1, 4, 9, 16], 'ro-')  # 红色圆点实线
+
+# 使用 data 参数
+data = {'x_values': [0, 1, 2, 3], 'y_values': [1, 4, 9, 16]}
+plt.plot('x_values', 'y_values', data=data)  # x 和 y 是 data 的键
+
+# 设置线条宽度和标签
+plt.plot([0, 1, 2, 3], [1, 4, 9, 16], linewidth=2, label='My Line')  # 线宽=2
+```
+3. `**kwargs`: 其他可选参数，用于设置线条属性（如颜色、宽度等）。
+```python
+# **kwargs参数示例：设置线条宽度和线条标签
+ax.plot([1, 4, 9, 16, 25], linewidth=3, label='Square value')
+```
+4. `set_title()`, `set_xlabel()`, `set_ylabel()`方法：用于设置图像标题以及坐标轴标签。可以加上`fontsize=n`关键字参数用于设置标签字体大小。
+```python
+import matplotlib.pyplot as plt
+
+square = [value ** 2 for value in range(1, 11)]
+fig, ax = plt.subplots()
+ax.plot(list(range(1, 11)), square, label='Square line') #**kwargs部分设置线条标签（图例）
+ax.set_title('Square line') #设置图表标题
+ax.set_xlabel('x') #设置x轴标签
+ax.set_ylabel('y') #设置y轴标签
+plt.legend() #用于显示线条标签（图例）
+plt.show()
+```
+5. 在默认情况下，`x`轴的数据为`y`轴的索引，因此从0开始，可能会导致困惑。所以注意是否需要指定`x`轴的数据。
+
+#### `matplotlib`内置样式
+该命令可以查看系统中可使用的所有绘图内置样式：
+```python
+import matplotlib.pyplot as plt
+
+plt.style.available
+```
+`plt.style`是对`matplotlib.style`子模块的引用，`style.available`是对子模块`style`的属性`available`进行访问。
+
+若要使用`plt.style.available`中列出的模板样式，可以在最开始加入下面的代码（下面示例使用seaborn-v0_8模板）：
+```python
+plt.style.use('seaborn-v0_8')
+```
+
+#### 使用`scatter()`绘制散点图
+绘制单个点，可以向`scatter()`方法分别传递`x`和`y`坐标值，比如`ax.scatter(2, 4)`。`scatter()`方法可以使用关键字参数`s`用于设置绘图所使用的点的尺寸。  
+`tick_params()`方法可以用于设置刻度标记的样式，比如字体大小等等。比如`ax.tick_params(labelsize=14)`。
+
+若要使用`scatter()`绘制一系列点的散点图，可以分别向`scatter()`传递包含`x`和`y`坐标值的列表。

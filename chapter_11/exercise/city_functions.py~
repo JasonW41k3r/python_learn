@@ -1,0 +1,9 @@
+def city(city_name, country_name, population):
+    ret = ''
+    ret += city_name.title()
+    ret += ', '
+    ret += country_name.title()
+    ret += ' - '
+    ret += str(population)
+    return ret
+

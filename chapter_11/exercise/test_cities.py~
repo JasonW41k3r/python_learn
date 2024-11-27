@@ -1,0 +1,5 @@
+from city_functions import city
+
+def test_city_country():
+    res = city('santiago', 'chile')
+    assert res == 'Santiago, Chile'
