@@ -1377,3 +1377,40 @@ date = datetime.strptime(str_time, str_fmt)
 其中`str_time`是字符串格式的时间，`str_fmt`是指示该字符串格式的格式控制字符串，如`'%Y-%m-%d'`。
 
 `strptime()`函数用于从字符串解析时间，`strptime`是string parse time的缩写。
+
+
+## CH17 API
+### 17.1 使用API
+API（Application program interface）是网站的一部分，程序可以利用API和网站进行交互，程序使用具体的URL请求特定的信息，这种请求称为**API调用**。请求的数据一般用程序易于理解的格式返回，比如JSON格式或CSV格式。
+
+使用外部数据源的应用程式一般依赖API调用。
+
+#### 使用API调用请求数据
+GitHub的API可以通过调用请求各种信息。比如下面的地址是一个GitHub的API调用：
+```
+https://api.github.com/search/repositories?q=language:python+sort:stars
+```
+结果会返回有关GitHub托管的python项目的相关信息。`https://api.github.com/`是GitHub的API地址，`search/repositories`让API搜索GitHub上的所有仓库。`?`问号指出需要传递一个参数，参数`q`表示查询，而等号`=`让我们可以指定查询，`language:python`指出查询只获取主要语言为python的仓库的信息，`+sort:stars`指定将项目按星数进行排序。
+
+#### `requests`模块
+`requests`模块用于让python程序可以向网站请求信息并检查返回的响应。
+
+#### 处理API响应
+```python
+import requests
+url = "https://api.github.com/search/repository"
+url += "?q=language:python+sort:stars+stars:>10000"
+
+headers = {"Accept": "application/vnd.github.v3+json"}
+r = requests.get(url, headers=headers)
+print(f"Status code: {r.status_code}")
+
+response_dict = r.json()
+
+print(response_dict.keys())
+```
+`stars:>10000`是一个筛选条件，筛选出stars数大于10000的项目。`Accept: application/vnd.github.v3+json` 是一个HTTP头部，用于指定客户端希望接收GitHub REST API第三版（v3）的专属（vnd.github）JSON格式的数据。
+
+`requests`模块的`get()`函数用于调用API，接收参数`url`和`headers`，返回一个响应对象。该响应对象包括一个`status_code`属性，指出请求是否成功（200表示成功）。
+
+`json()`是`requests`模块的一个方法，用于将响应对象的信息转换为一个python字典。
