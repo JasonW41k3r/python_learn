@@ -1414,3 +1414,47 @@ print(response_dict.keys())
 `requests`模块的`get()`函数用于调用API，接收参数`url`和`headers`，返回一个响应对象。该响应对象包括一个`status_code`属性，指出请求是否成功（200表示成功）。
 
 `json()`是`requests`模块的一个方法，用于将响应对象的信息转换为一个python字典。
+
+该API请求会返回一个JSON格式的文件，文件是一个字典，字典由三个键组成，分别是`total_count`，`incomplete_results`和`items`。
+
+`total_count`记录总共符合搜索条件的仓库总数；`incomplete_results`返回一个布尔值，`True`表示搜索查找出了所有结果（GitHub API对搜索时间有限制）；`items`是一个列表，其中包含很多字典，每个字典都是一个GitHub仓库的基本信息。
+
+#### 监控速率限制
+```
+https://api.github.com/rate_limit
+```
+访问上面的网址可以查看当前GitHub REST API访问的速率限制。
+
+### 17.2 Plotly可视化仓库
+可以利用`Plotly`模块创建交互式条形图，条形的高度表示项目收到的欢迎程度，单击条形可以进入项目在GitHub的主页。
+```python
+import requests
+import plotly.express as px
+
+url = "https://api.github.com/search/repositories"
+url += "?q=language:c+sort:stars+stars:>10000"
+headers = {"Accept": "application/vnd.github.v3+json"}
+r = requests.get(url, headers=headers)
+response_dict = r.json()
+repo_dicts = response_dict['items']
+repo_name, repo_stars = [], []
+for repo_dict in repo_dicts:
+    repo_name.append(repo_dict["name"])
+    repo_stars.append(repo_dict["stargazers_count"])
+
+fig = px.bar(x=repo_name, y=repo_stars)
+fig.show()
+```
+`px.bar()`函数创建了一个条形图，调用函数的时候，只需要输入相同维数的`x`和`y`列表即可。
+
+#### `Plotly`图形样式
+`px.bar()`函数还可以接受关键字参数`title`，`labels`设置图表的标签。其中`title`是一个字符串，`labels`是一个字典，字典的键是`x`或`y`，值是轴对应的标签。
+
+`update_layout()`方法可以作用于`px.bar()`生成的对象，用于设置标签的字号。比如：
+```
+fig.update_layout(title_font_size=28, xaxis_title_font_size=20, yaxis_title_font_size=20)
+```
+`px.bar()`函数可以接收`hover_name`关键字参数作为定制工具提示（tooltip），即悬停标注。
+
+ ## CH18 Django
+ 
