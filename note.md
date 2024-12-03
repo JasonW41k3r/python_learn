@@ -1525,13 +1525,13 @@ class Topic(models.Model):
         """返回模型的字符串表示"""
         return self.text
 ```
-这里创建了一个名为`Topic`的类，继承了`models`子模块的`Model`类（Django中定义模型基本功能的类）。
+这里创建了一个名为`Topic`的模型/模式（针对数据库而言）或对象（针对python而言），继承了`models`子模块的`Model`类（Django中定义模型基本功能的类）。
 
-`text`是模型中的一个`CharField`类型列对象（由字符组成的数据），在创建`CharField`对象时，必须告诉Django需要在数据库中预留的空间大小，通过指定`max_length`关键字参数规定。
+`text`是模型中的一个`CharField`类型列对象（由字符组成的数据）或属性（针对数据库而言），在创建`CharField`对象时，必须告诉Django需要在数据库中预留的空间大小，通过指定`max_length`关键字参数规定。
 
-`data_added`是模型中的一个`DateTimeField`类型列对象（记录时间和日期的数据），通过传递关键字实参`auto_now_add=True`，Django会在用户创建新主题的时候自动将该属性设置为当前的日期和时间。
+`data_added`是模型中的一个`DateTimeField`类型列对象（记录时间和日期的数据）或属性（针对数据库而言），通过传递关键字实参`auto_now_add=True`，Django会在用户创建新主题的时候自动将该属性设置为当前的日期和时间。
 
-`__str__()`方法告诉Django用户希望它表示模型实例的方式。每当需要生成表示模型实例的输出时，Django会调用这个方法。
+`__str__()`方法告诉Django用户希望它表示模型实例（表）的方式。每当需要生成表示模型实例的输出时，Django会调用这个方法。
 
 #### 激活模型
 在`settings.py`的代码中告知Django哪些应用程序被安装到了项目当中。当创建自己的应用程序后，需要在`INSTALLED_APPS`列表当中添加自己的应用程序。
@@ -1553,8 +1553,79 @@ python .\manage.py migrate
 2. 对`learning_logs`调用`makemigrations`，生成迁移方案。
 3. 对`learning_logs`调用`migrate`，让Django迁移项目。
 
+上面的步骤本质上是在`SQLite`中创建一个表格。
+
 #### Django管理网站（admin site）
 Django提供的管理网站可以轻松处理模型，管理网站仅供网站管理员使用，普通用户不能使用。
 
 ##### 创建超级用户
-Django**超级用户**（superuser）是具备所有权限的用户
+Django**超级用户**（superuser）是具备所有权限的用户。执行下面的命令可以创建超级用户：
+```bash
+python .\manage.py createsuperuser
+...
+```
+Django不会存储用户的密码，而是存储该密码的哈希值。Django校验密码通过校验哈希值进行比较。Django默认采用`PBKDF2`（Password-Based Key Derivation Function 2）哈希校验算法。
+
+##### 向管理网站注册模型
+需要在应用程序的文件夹内的`admin.py`文件内输入下面的代码：
+```python
+from .models import Topic
+admin.site.register(Topic)
+```
+`from .models import Topic`让Django在`admin.py`所在的目录下查找`models.py`，并导入其中的`Topic`类。
+
+`admin.site.register()`让Django通过管理网站管理模型。
+
+#### 定义模型`Entry`
+模型（表格）`Entry`用于记录话题`Topic`的具体内容。  
+*models.py*
+```python
+class Entry(models.Model):
+    topic = models.ForeignKey(Topic, on_delete=models.CASCADE)
+    text = models.TextField()
+    date_added = models.DataTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name_plural = 'entries'
+
+    def __str__(self):
+        return f"{self.text[:50]}..."
+```
+`a = models.ForeignKey(b)`代表将键`a`指定为`b`的外键，即`a`键指向`b`键，`a`键是`b`键的一个引用。`on_delete=models.CASCADE`指定级联删除，即删除一个键的时候同时删除引用该键的外键。
+
+`class Meta`是模型的额外元数据，`verbose_name_plural`属性用于定义模型的特殊复数形式（特别是在复数不规则的时候）。
+
+#### Django shell
+输入数据后，可以在终端以交互式对话查看数据，这个交互式环境称之为Django Shell。
+
+`python manage.py shell`可以打开交互式命令行。若要查询模型的数据，需要在python当中导入模型，比如`from learning_logs.models import Topic`。再通过`Topic.objects.all()`方法获取模型`Topic`的所有实例（可以理解为表的某个几个元组对应的属性），python将会返回称为**查询集**（query set）的列表。
+
+我们可以像遍历列表一样遍历查询集，比如：
+```python
+from learning_logs.models import Topic
+
+topics = Topic.objects.all()
+for topic in topics:
+    print(f"{topic.id}: {topic}")
+```
+`Topic.objects`是`Topic`表的管理器，管理器的`all()`方法生成表的元组，并返回所有 `Topic` 模型的记录（以`__str__()`方法定义的方式返回）。
+
+上面的命令还打印出`topic`元组的`id`属性以及其对应的`topic`元组，在`Topic`类的定义中我们已经通过`__str__()`方法定义了实例的返回值。
+
+我们还可以通过`get(id=<id>)`方法来指定特定的元组，并访问元组的属性。比如：
+```python
+...
+t = Topic.objects.get(id=1)
+print(f"text: {t.text}, date added: {t.date_added}")
+```
+
+我们还可以直接访问与特定元组相关联的条目，而不需要通过`from learning_logs.models import Entry`访问该条目。比如：
+```python
+t.entry_set.all()
+```
+上面的代码可以访问`t`元组的关联`entry`条目（前提是设置`entry`的某个属性为`t`中某个属性的外键）。通过外键关系获取数据，可以使用表的小写名称，用下划线连接`set`获取其外键。
+
+### 18.3 创建网页：学习笔记主页
+使用Django创建网页的过程有三个阶段：定义URL，编写视图以及编写模板。
+
+首先应该定义
