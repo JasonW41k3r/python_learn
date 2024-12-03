@@ -1628,4 +1628,48 @@ t.entry_set.all()
 ### 18.3 创建网页：学习笔记主页
 使用Django创建网页的过程有三个阶段：定义URL，编写视图以及编写模板。
 
-首先应该定义
+首先应该定义URL模式，它描述了URL的构成，让Django知道如何将浏览器请求与网站URL相匹配，以确定应该返回的网页。
+
+#### 映射URL
+用户通过在浏览器的地址栏输入URL以及单击链接来访问网页，因此需要确定项目所需要的URL。首先应该确认主页URL，默认情况下这是用户访问网页的基础URL（http://localhost:8000/），返回默认的Django网站。在我们的学习笔记项目当中，我们应该修改使得基础URL映射到“学习笔记”的主页。修改项目文件下`urls.py`中的代码：
+*ll_project/urls.py*
+```python
+from django.contrib import admin
+from django.urls import path
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+]
+```
+以上是默认的`urls.py`文件的内容，其中`urlpatterns`变量应该包含项目中所有应用程序的URL。模块`admin.site.urls`定义了可在管理网站中请求的所有URL。为了包含`learning_logs`应用程序的URL，我们需要在上面的代码当中加入：
+```python
+...
+from django.urls import include
+...
+urlpatterns = [
+    # 主页
+    path('', include('learning_logs.urls')),
+]
+...
+```
+上面的代码导入了`django.urls`子模块中的函数`include()`，并包含了`learning_logs.urls`模块，因此我们需要在应用程式文件夹`learning_logs`中再创建一个`urls.py`模块。模块中添加下面的代码：
+*learning_logs/urls.py*
+```python
+"""定义 learning_logs 的 URL 模式"""
+
+from django.urls import path
+from . import views
+
+app_name = 'learning_logs'
+urlpatterns = [
+    # 主页
+    path('', views.index, name='index'), 
+]
+```
+首先从`django.urls`子模块中导入`path()`函数，用于将URL映射到视图。然后从该应用的根目录导入`views`模块。变量`app_name`使得这个`url.py`文件可以与其他应用的同名文件区分开，`urlpatterns`变量是一个列表，包含在该应用中可以请求的网页。
+
+实际的URL模式在`path()`函数调用中澄清，函数接收三个实参，分别是需要匹配的URL地址，URL地址匹配的资源以及额外的参数（比如为该模式指定名称`name='index'`）。第二个参数可以是多种类型，只要是需要匹配的资源即可，比如`view.index`是指若匹配第一个参数，则请求作用于某个视图的`index`函数；`admin.site.urls`是指若匹配第一个参数，则传递请求给该URL集合（包含一系列处理请求的函数）。
+
+**注意**：Django忽略项目基础URL（https://localhost:8000/），因此基础URL会被视为空字符串。
+
+#### 编写视图
