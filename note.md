@@ -856,7 +856,7 @@ class ElectricCar(Car):
         print(f"The size of the battery is {self.battery_size}".)
         
 ```
-在创建子类的时候，父类必须包含在当前同一个文件当中，并且位于子类的前面。定义子类的时候，必须在括号内指定其父类的名称。
+在创建子类的时候，父类必须包含在当前同一个文件当中，并且位于子类的前面。定义子类的时候，**必须在括号内指定其父类的名称**。
 
 `super()`函数是一个特殊的函数，用于调用父类的方法。父类又称为**超类**（superclass）。`super().__init()`使得子类调用了父类的初始化方法用于初始化子类的属性。
 
@@ -1457,4 +1457,104 @@ fig.update_layout(title_font_size=28, xaxis_title_font_size=20, yaxis_title_font
 `px.bar()`函数可以接收`hover_name`关键字参数作为定制工具提示（tooltip），即悬停标注。
 
  ## CH18 Django
- 
+ Django是一个python Web框架，用于创建能同时作为动态网站和移动应用程序的项目。
+
+ ### 18.1 建立项目
+ 着手开发大型项目的时候，首先需要制定**规范**（specificat, spec），对项目的目标进行描述。
+ #### 制定规范
+ 完整的规范包括：  
+ 1. 项目的目标
+ 2. 项目的功能
+ 3. 项目的外观和用户界面
+
+#### 利用`venv`模块建立虚拟环境
+进入虚拟环境对应的项目的目录后，执行：
+```bash
+python -m venv ll_env
+```
+`python -m`指定下面的命令在python解释器中运行，保证`venv`模块创建的虚拟环境是对应系统下默认python解释器。`venv ll_env`指定创建一个名为`ll_env`的虚拟环境。
+
+#### 激活`venv`虚拟环境
+Windows下在项目的根目录下输入：
+```bash
+.\ll_env\Scripts\Activate
+```
+停止使用虚拟环境，可以直接运行命令`deactivate`。
+
+#### 创建Django项目
+```bash
+django-admin startproject ll_project .
+```
+运行上面的命令会用Django在项目目录下创建一个名为`ll_project`的项目。命令末尾的句点（.）让新项目使用合适的目录结构，即项目会直接在该项目文件夹下面创建，而不是再创建新的文件夹中创建。
+
+该操作创建了新文件`manage.py`，这个程序接受命令从而管理Django，用于管理使用数据库和运行服务器。
+
+目录`ll_project`中包含四个文件，`settings.py`指定Django与系统交互以及管理项目的方式，`urls.py`告知Django用于响应浏览器请求的网页，`wsgi.py`用于提供Django创建的文件。
+
+#### 创建数据库
+Django将项目相关的信息存储到数据库当中，而Django中对数据库的修改称为**迁移**（migrate）数据库。首次创建数据库，执行下面的命令：
+```bash
+python .\manage.py migrate
+```
+Django默认会创建一个单文件的SQLite数据库。
+
+#### 查看项目
+可以使用命令`runserver`查看项目的状态。
+```bash
+python manage.py runserver
+```
+Django会启动一个服务器，可以查看系统的项目并了解其工作状态。如果在浏览器中输入URL以请求网页，该服务器会响应，生成合适的网页并发送给浏览器。
+
+### 18.2 创建应用程式
+Django项目（project）由一系列的应用程式组成，协同工作从而让项目称为一个整体。在项目根目录下执行命令，从而创建一个app：
+```bash
+python .\manage.py startapp learning_logs
+```
+其中`startapp <appname>`指示创建一个新的应用程序，并在根目录下创建一个名为`<appname>`的新文件夹用于存放应用程式的相关文件。
+
+#### 定义模型
+在新创建的文件夹中，我们使用`models.py`用于定义应用程式需要管理的数据。
+```python
+from django.db import models
+
+class Topic(models.Model):
+    """用户学习的主题"""
+    text = models.CharField(max_length=200)
+    date_added = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        """返回模型的字符串表示"""
+        return self.text
+```
+这里创建了一个名为`Topic`的类，继承了`models`子模块的`Model`类（Django中定义模型基本功能的类）。
+
+`text`是模型中的一个`CharField`类型列对象（由字符组成的数据），在创建`CharField`对象时，必须告诉Django需要在数据库中预留的空间大小，通过指定`max_length`关键字参数规定。
+
+`data_added`是模型中的一个`DateTimeField`类型列对象（记录时间和日期的数据），通过传递关键字实参`auto_now_add=True`，Django会在用户创建新主题的时候自动将该属性设置为当前的日期和时间。
+
+`__str__()`方法告诉Django用户希望它表示模型实例的方式。每当需要生成表示模型实例的输出时，Django会调用这个方法。
+
+#### 激活模型
+在`settings.py`的代码中告知Django哪些应用程序被安装到了项目当中。当创建自己的应用程序后，需要在`INSTALLED_APPS`列表当中添加自己的应用程序。
+
+**注意**：应该把自己创建的应用程序放在默认应用程序前，这样能够覆盖默认应用程序的行为。
+
+接下来，需要让Django修改数据库，使得其可以在数据库中存储与新建模型`Topic`相关的信息。在终端执行下面的命令：
+```bash
+python .\manage.py makemigrations learning_logs
+```
+该命令让Django先确认修改数据库的方式，并输出一个迁移文件作为迁移方案。这个文件将在数据库中为新建的模型创建一个表。
+
+为了应用上面的迁移方案，在终端执行下面的命令：
+```bash
+python .\manage.py migrate
+```
+**注意**：以后每次修改“学习笔记”所管理的数据的时候，都要采取下面的三个步骤：  
+1. 修改`models.py`。
+2. 对`learning_logs`调用`makemigrations`，生成迁移方案。
+3. 对`learning_logs`调用`migrate`，让Django迁移项目。
+
+#### Django管理网站（admin site）
+Django提供的管理网站可以轻松处理模型，管理网站仅供网站管理员使用，普通用户不能使用。
+
+##### 创建超级用户
+Django**超级用户**（superuser）是具备所有权限的用户
