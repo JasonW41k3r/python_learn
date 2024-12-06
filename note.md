@@ -1645,3 +1645,28 @@ urlpatterns = [
 **注意**：Django忽略项目基础URL（https://localhost:8000/），因此基础URL会被视为空字符串。
 
 #### 编写视图
+在应用程式的文件夹内编辑`views.py`文件可以为应用程式编写视图。
+*learning_logs/view.py*
+```python
+from django.shortcuts import render
+
+# 在这里创建视图
+```
+以上是默认生成的`views.py`文件，我们需要添加下面的代码，定义用于处理URL请求的`index()`函数：
+```python
+def index(requests):
+    """学习笔记的主页"""
+    return render(request, 'learning_logs/index.html')
+```
+在`django.shortcuts`子模块中的`render()`函数用于将请求`request`传递给模板`'learning_logs/index.html'`。请求中可能包含用户信息，由此模板中可以对不同用户的请求进行不同的处理。
+
+#### 编写模板
+模板是渲染数据和生成网页的主阵地。  
+在应用程式文件夹中新建文件夹命名为`templates`，并在新文件夹中再新建`learning_logs`文件夹，其中放置该应用程式的所有模板文件，包括`index.html`。
+*index.html*
+```html
+<p>Learning Log</p>
+
+<p>Learning Log helps you keep track of your learning, for any topic you're interested in.</p>
+```
+`<p>...</p>`是`html`语言的段落标记符，分别标记了段落的开始和结束。
